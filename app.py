@@ -24,9 +24,12 @@ def home():
     cursor.execute('SELECT * FROM STUDENT')    
     return render_template("main.html", rows = cursor.fetchall())
 
+
 @app.route("/", methods=["POST"])
 def values():
+    # if its post
     if(request.method == "POST"):
+        # get each the values
         add = request.form.get("add")
         remove = request.form.get("delete")
         update = request.form.get("update")
@@ -36,12 +39,14 @@ def values():
         id = request.form.get("id")
         points = request.form.get("points")
 
+        # reset the table
         if(reset is not None):
             reset_table()
-        
+        # if any box is empty, then send to error
         elif(name == "" or id == "" or points == ""):
             return render_template("error.html")
 
+        # check which box was selected
         if(add is not None):
             add_element(name, id, points)
             print("yes")
@@ -55,7 +60,7 @@ def values():
             value = search_table(name, id, points)
             return value
 
-
+    # print out the table
     db = get_db()
     cursor = db.cursor()
     cursor.execute('SELECT * FROM STUDENT')    
@@ -63,6 +68,7 @@ def values():
 
 
 def add_element(name, id, points):
+    # get the value and insert into table
     try:
         db = get_db()
         cursor = db.cursor()
@@ -71,12 +77,14 @@ def add_element(name, id, points):
         )   
         db.commit()
     except Exception as e:
+        # some error was found
         print("ERROR: ", e)
         return render_template("error.html")
 
     return
 
 def remove_element(name, id, points):
+    # try to remove otherwise error out
     try:
         print(name, id, points)
         db = get_db()
@@ -92,6 +100,7 @@ def remove_element(name, id, points):
     return
 
 def update_table(name, id, points):
+    # try to update otherwise error out
     try:
         print(name, id, points)
         db = get_db()
@@ -108,6 +117,7 @@ def update_table(name, id, points):
     return
 
 def search_table(name, id, points):
+    # search through the table
     try:
         print(name, id, points)
         db = get_db()
@@ -123,6 +133,7 @@ def search_table(name, id, points):
 
 
 def reset_table():
+    # basically used to print out the table
     try:
         db = get_db()
         cursor = db.cursor()
